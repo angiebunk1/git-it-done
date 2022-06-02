@@ -1,5 +1,17 @@
 var issueContainerEl = document.querySelector("#issues-container");
 
+var limitWarningEl = document.querySelector("#limit-warning");
+
+var displayWarning = function(repo) {
+    limitWarningEl.textContent = "To see more than 30 issues, visit ";
+
+    var linkEl = document.createElement("a");
+    linkEl.textContent = "See More Issues on GitHub.com";
+    linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
+    linkEl.setAttribute("target", "_blank");
+
+    limitWarningEl.appendChild(linkEl);
+};
 
 
 var getRepoIssues = function(repo) {
@@ -9,6 +21,10 @@ var getRepoIssues = function(repo) {
         if (response.ok) {
             response.json().then(function(data){
                 displayIssues(data);
+
+                if (response.headers.get("Link")) {
+                    displayWarning(repo);
+                }
             });
         }
         else {
@@ -17,7 +33,7 @@ var getRepoIssues = function(repo) {
     });
 };
 
-getRepoIssues("angiebunk1/run-buddy");
+getRepoIssues("facebook/react");
 
 var displayIssues = function(issues) {
     if (issues.length === 0) {
